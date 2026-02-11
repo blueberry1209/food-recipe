@@ -1,7 +1,7 @@
 
 import { GoogleGenAI, GenerateContentResponse, Type } from "@google/genai";
 
-const API_KEY = process.env.API_KEY;
+const API_KEY = (typeof process !== 'undefined' && process.env) ? process.env.API_KEY : undefined;
 
 export interface RecipeResult {
   title: string;
@@ -39,7 +39,11 @@ export const generateRecipe = async (ingredients: string): Promise<RecipeResult 
   });
 
   try {
-    return JSON.parse(response.text) as RecipeResult;
+    const text = response.text;
+    if (text) {
+        return JSON.parse(text) as RecipeResult;
+    }
+    return null;
   } catch (error) {
     console.error("Failed to parse recipe JSON", error);
     return null;

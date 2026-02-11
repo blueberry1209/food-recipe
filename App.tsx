@@ -1,6 +1,9 @@
 
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback } from 'react';
 import { generateRecipe, generateDishImage, editDishImage, RecipeResult } from './services/geminiService';
+
+// Check for API Key availability safely, preventing crashes in environments where `process` is not defined.
+const isApiKeyAvailable = typeof process !== 'undefined' && process.env && !!process.env.API_KEY;
 
 const ApiKeyWarning: React.FC = () => (
   <div className="flex flex-col items-center justify-center min-h-screen bg-rose-50 text-center p-8">
@@ -24,7 +27,6 @@ const ApiKeyWarning: React.FC = () => (
 );
 
 const App: React.FC = () => {
-  const [isApiKeyAvailable, setIsApiKeyAvailable] = useState<boolean>(false);
   const [ingredients, setIngredients] = useState<string>('');
   const [recipe, setRecipe] = useState<RecipeResult | null>(null);
   const [imageUrl, setImageUrl] = useState<string | null>(null);
@@ -32,13 +34,6 @@ const App: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isImageLoading, setIsImageLoading] = useState<boolean>(false);
   const [isEditing, setIsEditing] = useState<boolean>(false);
-
-  useEffect(() => {
-    // Vercel 환경에서는 process.env에 접근 가능
-    if (process.env.API_KEY) {
-      setIsApiKeyAvailable(true);
-    }
-  }, []);
 
   const handleRecommend = useCallback(async () => {
     if (!ingredients.trim()) return;
