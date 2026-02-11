@@ -7,24 +7,54 @@ const isApiKeyAvailable = typeof process !== 'undefined' && process.env && !!pro
 
 const ApiKeyWarning: React.FC = () => (
   <div className="flex flex-col items-center justify-center min-h-screen bg-rose-50 text-center p-8">
-    <div className="bg-white p-10 rounded-2xl shadow-xl max-w-lg border border-rose-100">
+    <div className="bg-white p-10 rounded-2xl shadow-xl max-w-2xl border border-rose-100">
       <svg className="w-16 h-16 text-rose-400 mx-auto mb-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
       </svg>
-      <h1 className="text-2xl font-bold text-gray-800 mb-3">API 키 설정이 필요합니다</h1>
-      <p className="text-gray-600 mb-6">
-        이 애플리케이션을 실행하려면 Gemini API 키가 필요합니다. Vercel 프로젝트 대시보드에서 환경 변수를 설정해주세요.
+      <h1 className="text-3xl font-bold text-gray-800 mb-3">API 키 설정이 필요합니다</h1>
+      <p className="text-gray-600 mb-8 max-w-lg mx-auto">
+        이 앱의 핵심 AI 기능을 사용하려면 Google Gemini API 키가 필요합니다. 아래의 간단한 두 단계를 따라 설정해주세요.
       </p>
-      <div className="bg-gray-50 p-4 rounded-lg text-left text-sm">
-        <p className="font-semibold text-gray-700">1. Vercel 프로젝트 {'>'} Settings {'>'} Environment Variables 로 이동하세요.</p>
-        <p className="mt-2">2. 이름(Name)에 <code className="bg-gray-200 px-2 py-1 rounded">API_KEY</code> 를, 값(Value)에 발급받은 API 키를 입력하고 저장하세요.</p>
-        <p className="mt-4 text-xs text-gray-500">
-          설정 후 변경사항이 적용되도록 앱을 다시 배포(redeploy)해야 할 수 있습니다.
-        </p>
+      <div className="space-y-6 text-left">
+        {/* Step 1: Get API Key */}
+        <div className="bg-gray-50 p-6 rounded-xl border border-gray-200">
+          <h2 className="text-lg font-bold text-gray-700 mb-3">1단계: Gemini API 키 발급받기</h2>
+          <p className="text-gray-600 mb-4">
+            Google AI Studio에 방문하여 새로운 API 키를 생성하세요. 개인적인 학습 및 테스트 목적이라면 무료로 사용 가능합니다.
+          </p>
+          <a
+            href="https://aistudio.google.com/app/apikey"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-block w-full text-center px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white font-bold rounded-lg transition-all active:scale-95 shadow-lg shadow-blue-100"
+          >
+            Google AI Studio로 이동하여 키 받기
+          </a>
+           <p className="text-xs text-gray-500 mt-3">
+            페이지에서 'Create API key in new project' 버튼을 클릭하고 생성된 키를 복사해두세요.
+          </p>
+        </div>
+
+        {/* Step 2: Set API Key in Vercel */}
+        <div className="bg-gray-50 p-6 rounded-xl border border-gray-200">
+          <h2 className="text-lg font-bold text-gray-700 mb-3">2단계: Vercel에 API 키 등록하기</h2>
+           <p className="text-gray-600 mb-4">
+            복사한 API 키를 Vercel 프로젝트의 환경 변수로 추가해야 앱이 키를 안전하게 사용할 수 있습니다.
+          </p>
+          <div className="bg-white p-4 rounded-lg text-sm border">
+            <p className="font-semibold text-gray-700">1. Vercel 프로젝트 {'>'} Settings {'>'} Environment Variables 로 이동하세요.</p>
+            <p className="mt-2">2. 이름(Name)에 <code className="bg-gray-200 px-2 py-1 rounded-md text-red-500 font-mono">API_KEY</code> 를 입력하세요.</p>
+            <p className="mt-2">3. 값(Value)에 1단계에서 복사한 API 키를 붙여넣고 저장하세요.</p>
+          </div>
+          <p className="mt-4 text-xs text-gray-500">
+            <strong>중요:</strong> 설정 후 변경사항이 적용되도록 Vercel 프로젝트를 다시 배포(Redeploy)해야 할 수 있습니다.
+          </p>
+        </div>
       </div>
     </div>
   </div>
 );
+
 
 const App: React.FC = () => {
   const [ingredients, setIngredients] = useState<string>('');
