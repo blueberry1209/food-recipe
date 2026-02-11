@@ -1,7 +1,7 @@
 
 import { GoogleGenAI, GenerateContentResponse, Type } from "@google/genai";
 
-const API_KEY = process.env.API_KEY || '';
+const API_KEY = process.env.API_KEY;
 
 export interface RecipeResult {
   title: string;
@@ -11,6 +11,9 @@ export interface RecipeResult {
 }
 
 export const getGeminiClient = () => {
+  if (!API_KEY) {
+    throw new Error("API_KEY environment variable not set. Please set it in your Vercel project settings.");
+  }
   return new GoogleGenAI({ apiKey: API_KEY });
 };
 

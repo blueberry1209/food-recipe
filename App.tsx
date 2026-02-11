@@ -1,8 +1,30 @@
 
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { generateRecipe, generateDishImage, editDishImage, RecipeResult } from './services/geminiService';
 
+const ApiKeyWarning: React.FC = () => (
+  <div className="flex flex-col items-center justify-center min-h-screen bg-rose-50 text-center p-8">
+    <div className="bg-white p-10 rounded-2xl shadow-xl max-w-lg border border-rose-100">
+      <svg className="w-16 h-16 text-rose-400 mx-auto mb-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+      </svg>
+      <h1 className="text-2xl font-bold text-gray-800 mb-3">API 키 설정이 필요합니다</h1>
+      <p className="text-gray-600 mb-6">
+        이 애플리케이션을 실행하려면 Gemini API 키가 필요합니다. Vercel 프로젝트 대시보드에서 환경 변수를 설정해주세요.
+      </p>
+      <div className="bg-gray-50 p-4 rounded-lg text-left text-sm">
+        <p className="font-semibold text-gray-700">1. Vercel 프로젝트 {'>'} Settings {'>'} Environment Variables 로 이동하세요.</p>
+        <p className="mt-2">2. 이름(Name)에 <code className="bg-gray-200 px-2 py-1 rounded">API_KEY</code> 를, 값(Value)에 발급받은 API 키를 입력하고 저장하세요.</p>
+        <p className="mt-4 text-xs text-gray-500">
+          설정 후 변경사항이 적용되도록 앱을 다시 배포(redeploy)해야 할 수 있습니다.
+        </p>
+      </div>
+    </div>
+  </div>
+);
+
 const App: React.FC = () => {
+  const [isApiKeyAvailable, setIsApiKeyAvailable] = useState<boolean>(false);
   const [ingredients, setIngredients] = useState<string>('');
   const [recipe, setRecipe] = useState<RecipeResult | null>(null);
   const [imageUrl, setImageUrl] = useState<string | null>(null);
@@ -10,6 +32,13 @@ const App: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isImageLoading, setIsImageLoading] = useState<boolean>(false);
   const [isEditing, setIsEditing] = useState<boolean>(false);
+
+  useEffect(() => {
+    // Vercel 환경에서는 process.env에 접근 가능
+    if (process.env.API_KEY) {
+      setIsApiKeyAvailable(true);
+    }
+  }, []);
 
   const handleRecommend = useCallback(async () => {
     if (!ingredients.trim()) return;
@@ -52,6 +81,10 @@ const App: React.FC = () => {
       setIsEditing(false);
     }
   }, [imageUrl, editPrompt]);
+  
+  if (!isApiKeyAvailable) {
+    return <ApiKeyWarning />;
+  }
 
   return (
     <div className="min-h-screen p-4 md:p-8 flex flex-col items-center bg-[#fdfcfb]">
